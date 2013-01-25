@@ -1,0 +1,9 @@
+DefaultPackage
+grails-app.conf
+grails-app.domain.com.jeffrick.grails.plugins.sharding
+grails-app.services.com.jeffrick.grails.plugins.services
+scripts
+src.groovy.com.jeffrick.grails.plugin.sharding
+src.java.com.jeffrick.hibernate.cache
+test.unit.com.jeffrick.grails.plugins.services
+test.unit.com.jeffrick.grails.plugins.sharding
