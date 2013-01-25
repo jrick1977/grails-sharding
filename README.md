@@ -23,52 +23,53 @@ The Sharding plugin follows the convention over configuration philosiphy of grai
 In addition to the normal DSL for multiple data sources there is one additional configuration value you must add, the shard attribute.  This defines whether this datasource is a shard that should be included as we assign shards to objects. 
 
 Here is an example DataSource.groovy
-dataSource {
-	pooled = true
-	driverClassName = "org.h2.Driver"
-	username = "sa"
-	password = ""
-}
-hibernate {
-    cache.use_second_level_cache=true
-    cache.use_query_cache=true
-    cache.provider_class='net.sf.ehcache.hibernate.EhCacheProvider'
-}
-// environment specific settings
-environments {
-	development {
-		dataSource {
-                        shard = false
-			dbCreate = "update" // one of 'create', 'create-drop','update'
-			url = "jdbc:mysql://localhost:3306/shardINDEX"
-                        username = "root"
+	dataSource {
+		pooled = true
+		driverClassName = "org.h2.Driver"
+		username = "sa"
+		password = ""
+	}
+	hibernate {
+    		cache.use_second_level_cache=true
+    		cache.use_query_cache=true
+    		cache.provider_class='net.sf.ehcache.hibernate.EhCacheProvider'
+	}
+	
+	// environment specific settings
+	environments {
+		development {
+			dataSource {
+	                        shard = false
+				dbCreate = "update" // one of 'create', 'create-drop','update'
+				url = "jdbc:mysql://localhost:3306/shardINDEX"
+	                        username = "root"
+			}
+	                dataSource_index {
+        	                shard = false
+                	        dbCreate = "update" // one of 'create', 'create-drop','update'
+	                        url = "jdbc:mysql://localhost:3306/shardINDEX"
+        	                username = "root"
+                	 }
+                 	dataSource_shard01 {
+                        	 shard = true
+                         	dbCreate = "update" // one of 'create', 'create-drop','update'
+                         	url = "jdbc:mysql://localhost:3306/shard1001"
+                         	username = "root"
+                 	}
+                 	dataSource_shard02 {
+                        	shard = true
+                         	dbCreate = "update" // one of 'create', 'create-drop','update'
+                         	url = "jdbc:mysql://localhost:3306/shard1002"
+                         	username = "root"
+                  	}
 		}
-                dataSource_index {
-                        shard = false
-                        dbCreate = "update" // one of 'create', 'create-drop','update'
-                        url = "jdbc:mysql://localhost:3306/shardINDEX"
-                        username = "root"
-                 }
-                 dataSource_shard01 {
-                         shard = true
-                         dbCreate = "update" // one of 'create', 'create-drop','update'
-                         url = "jdbc:mysql://localhost:3306/shard1001"
-                         username = "root"
-                 }
-                 dataSource_shard02 {
-                         shard = true
-                         dbCreate = "update" // one of 'create', 'create-drop','update'
-                         url = "jdbc:mysql://localhost:3306/shard1002"
-                         username = "root"
-                  }
+		test {
+			...
+		}
+		production {
+			...
+		}
 	}
-	test {
-		...
-	}
-	production {
-		...
-	}
-}
 
 In addition to the DataSource.groovy file you must also create a domain class that will be used to associate data with a shard.  Most often this class is a user class but could be any thing you would like.  Once you have created that domain class you need to do the following:
            -- Create a string field that will hold the shard assignment (typically    
@@ -81,21 +82,21 @@ In addition to the DataSource.groovy file you must also create a domain class th
 Here is an example class (UserIndex.groovy):
 import com.jeffrick.grails.plugin.sharding.annotation.Shard
 
-@Shard(fieldName = "shard", indexDataSourceName = "dataSource_index")
-class UserIndex {
+	@Shard(fieldName = "shard", indexDataSourceName = "dataSource_index")
+	class UserIndex {
 
-    String userName
+	    String userName
 	 
-    String shard
+     	    String shard
 
-    static mapping = {
-        datasources(['index'])
-    }
+    	    static mapping = {
+        	datasources(['index'])
+    	    }
 
-    static constraints = {
+	    static constraints = {
 
-    }
-}
+    	    }
+	}
 
 
 Shard Domain Class
