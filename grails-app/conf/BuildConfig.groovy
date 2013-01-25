@@ -12,7 +12,7 @@ grails.project.dependency.resolution = {
   repositories {
     grailsPlugins()
     grailsHome()
-
+    //grailsRepo "http://grails.org/plugins"
     // uncomment the below to enable remote dependency resolution
     // from public Maven repositories
     //mavenLocal()
@@ -25,9 +25,14 @@ grails.project.dependency.resolution = {
   }
   dependencies {
     compile('c3p0:c3p0:0.9.1')
+
     // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
     // runtime 'mysql:mysql-connector-java:5.1.5'
   }
+    plugins {
+        runtime ":hibernate:$grailsVersion"
+
+    }
 
 }

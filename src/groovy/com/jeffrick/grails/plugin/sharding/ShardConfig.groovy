@@ -9,20 +9,6 @@ package com.jeffrick.grails.plugin.sharding
 class ShardConfig {
   int id
   String name
-  String jdbcUrl
-  String user
-  String password
-  String driverClass
-  Integer capacity
-  
-  Integer initialPoolSize
-  Integer minPoolSize
-  Integer maxPoolSize
-  Boolean testConnectionOnCheckin = false
-  Boolean testConnectionOnCheckout = false
-  Integer maxIdleTime
-  Integer maxConnectionAge
-  String automaticTestTable
-    
+
   Boolean autoCommit = true
 }

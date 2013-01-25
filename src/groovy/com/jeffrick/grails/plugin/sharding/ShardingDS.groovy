@@ -20,6 +20,8 @@ class ShardingDS extends AbstractRoutingDataSource implements ApplicationContext
     this.applicationContext = applicationContext
   }
 
+
+
   public Connection getConnection() throws SQLException {
     Connection con = super.getConnection();
     if (con.getAutoCommit() != CurrentShard.getAutoCommit()) {

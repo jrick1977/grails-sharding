@@ -1,7 +1,6 @@
 package com.jeffrick.hibernate.cache;
 
 import com.jeffrick.grails.plugin.sharding.CurrentShard;
-import com.jeffrick.grails.plugin.sharding.Index;
 import com.jeffrick.grails.plugin.sharding.ShardConfig;
 import org.hibernate.cache.Cache;
 import org.hibernate.cache.CacheException;
@@ -22,7 +21,7 @@ public class ShardCacheWrapper implements Cache {
     }
 
     protected String getPrefix() {
-        if(getRegionName().equals(Index.getIndexDomainClass())) {
+        if(getRegionName().equals(CurrentShard.getIndexDataSourceName())) {
             return("INDEX");
         } else {
             ShardConfig current = CurrentShard.get();

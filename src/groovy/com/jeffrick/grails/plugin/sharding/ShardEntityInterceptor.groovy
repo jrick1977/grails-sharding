@@ -1,5 +1,6 @@
 package com.jeffrick.grails.plugin.sharding
 
+
 import org.hibernate.EmptyInterceptor
 import org.hibernate.Transaction
 import org.springframework.orm.hibernate3.HibernateTransactionManager
@@ -27,14 +28,14 @@ public class ShardEntityInterceptor extends EmptyInterceptor implements Applicat
 
   public void afterTransactionBegin(Transaction transaction) {
     String trnsDatabase = transaction.jdbcContext.connectionManager.connection.getMetaData().getURL();
-    Index currentIndex = Index.get()
+    String indexDatabaseURL= CurrentShard.getIndexDatabaseURL()
 
     // If the database starting a transaction isn't the index database then we need to start a transaction
     // for the index database
-    if (!trnsDatabase.equals(currentIndex.name)) {
+    if (!trnsDatabase.equals(indexDatabaseURL)) {
 
       // Get the transaction manager for the index database
-      trnsManager = applicationContext.getBean("transactionManager_" + currentIndex.name)
+      trnsManager = applicationContext.getBean("transactionManager_" + CurrentShard.getIndexDataSourceName().replace("dataSource_",""))
       trnsManager.setTransactionSynchronization AbstractPlatformTransactionManager.SYNCHRONIZATION_NEVER
 
       // Create a new transaction and store it for later use
@@ -49,11 +50,11 @@ public class ShardEntityInterceptor extends EmptyInterceptor implements Applicat
     // if the transaction was committed then we need to commit the index
     // transaction otherwise we should rollback
     if (transaction?.wasCommitted()) {
-      if (!trnsStatus.completed) {
+      if (!trnsStatus?.completed) {
         trnsManager?.commit(trnsStatus)
       }
     } else {
-      if (!trnsStatus.completed) {
+      if (!trnsStatus?.completed) {
         trnsManager?.rollback(trnsStatus)
       }
     }
@@ -64,6 +65,8 @@ public class ShardEntityInterceptor extends EmptyInterceptor implements Applicat
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
   }
+
+
 
 }
 

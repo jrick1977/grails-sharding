@@ -6,7 +6,10 @@ package com.jeffrick.grails.plugins.sharding
  * @author <a href='mailto:jeffrick@gmail.com'>Jeff Rick</a>
  */
 class Shard {
-  static mapping = { cache true }
+  static mapping = {
+      cache true
+      datasources(['index'])
+  }
   
   /**
    * The name of the shard, used internally to refer to the shard.
@@ -50,12 +53,12 @@ class Shard {
     this.save(flush: true)
   }
 
+
   def String toString() {
     return "com.rezzonate.domain.index.Shard{" +
             "id=" + id +
             ", shardName=" + shardName +
             ", shardUsage='" + shardUsage + '\'' +
-            " shardType=" + shardType +
             ", ratio='" + ratio + '\'' +
             '}';
   }
