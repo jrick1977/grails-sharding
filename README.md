@@ -22,6 +22,8 @@ The Sharding plugin follows the convention over configuration philosiphy of grai
      -- etc
 In addition to the normal DSL for multiple data sources there is one additional configuration value you must add, the shard attribute.  This defines whether this datasource is a shard that should be included as we assign shards to objects. 
 
+Note: You MUST have a DataSource named datasource_index where in the index object will live
+
 Here is an example DataSource.groovy
 	dataSource {
 		pooled = true
@@ -74,6 +76,7 @@ Here is an example DataSource.groovy
 In addition to the DataSource.groovy file you must also create a domain class that will be used to associate data with a shard.  Most often this class is a user class but could be any thing you would like.  Once you have created that domain class you need to do the following:
            -- Create a string field that will hold the shard assignment (typically    
               called shard)
+           -- Set the datasources attribute for the class to be 'index'
            -- Add the com.jeffrick.grails.plugin.sharding.annotation.Shard  
               annotation to that class
            -- Create a fieldName and indexDataSourceName attributes of the 
@@ -97,6 +100,12 @@ import com.jeffrick.grails.plugin.sharding.annotation.Shard
 
     	    }
 	}
+
+Domain Classes that should be sharded
+Finally any Domain Class that you want to be sharded you must set to use the ALL datasource to do this add the following to your domain class:
+	static mapping = {
+        	datasource 'ALL'
+    	}	
 
 
 Shard Domain Class
