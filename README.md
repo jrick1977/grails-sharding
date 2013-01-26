@@ -13,18 +13,21 @@ The Sharding plugin allows application programmers to define multiple database s
 Dependancies
 
 The Sharding plugin follows the convention over configuration philosiphy of grails but in some cases needs the programmer to provide some configuration. This configuration is in two places.  First you have to define all of the data sources your application will use in the normal grails-app/conf/DataSource.groovy.  In here you should have at least four data sources:
+
      -- Default Datasource 
-     -- Index Datasource - should be the same database as defined four the 
+     -- Index Datasource - should be the same database as defined for the 
         default.
      -- Shard Data Source 
      -- Shard Data Source
      -- Shard ....
      -- etc
+     
 In addition to the normal DSL for multiple data sources there is one additional configuration value you must add, the shard attribute.  This defines whether this datasource is a shard that should be included as we assign shards to objects. 
 
 Note: You MUST have a DataSource named datasource_index where in the index object will live
 
 Here is an example DataSource.groovy
+
 	dataSource {
 		pooled = true
 		driverClassName = "org.h2.Driver"
@@ -74,6 +77,7 @@ Here is an example DataSource.groovy
 	}
 
 In addition to the DataSource.groovy file you must also create a domain class that will be used to associate data with a shard.  Most often this class is a user class but could be any thing you would like.  Once you have created that domain class you need to do the following:
+
            -- Create a string field that will hold the shard assignment (typically    
               called shard)
            -- Set the datasources attribute for the class to be 'index'
@@ -83,6 +87,7 @@ In addition to the DataSource.groovy file you must also create a domain class th
               annotation
 
 Here is an example class (UserIndex.groovy):
+
 import com.jeffrick.grails.plugin.sharding.annotation.Shard
 
 	@Shard(fieldName = "shard", indexDataSourceName = "dataSource_index")
