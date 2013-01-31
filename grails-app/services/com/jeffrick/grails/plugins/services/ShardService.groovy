@@ -1,9 +1,12 @@
 package com.jeffrick.grails.plugins.services
 
-import com.jeffrick.grails.plugin.sharding.Shards
+import org.hibernate.HibernateException
+
 import com.jeffrick.grails.plugin.sharding.CurrentShard
 import com.jeffrick.grails.plugin.sharding.ShardConfig
+import com.jeffrick.grails.plugin.sharding.Shards
 import com.jeffrick.grails.plugins.sharding.Shard
+import com.jeffrick.grails.plugin.sharding.annotation.Shard as ShardAnnotation
 
 /**
  * @author <a href='mailto:jeffrick@gmail.com'>Jeff Rick</a>
@@ -12,16 +15,16 @@ class ShardService {
     def sessionFactory
 
     // This needs to be false otherwise all connections create will always be transactional
-    boolean transactional = false
+    static transactional = false
 
     def getShard(object) {
         //Index currentIndex = Index.get()
         Shard currentShard
 
         // If the object is the shard lookup domain class then we can find the current shard
-        if (object.metaClass.getTheClass().isAnnotationPresent(com.jeffrick.grails.plugin.sharding.annotation.Shard.class)) {
-            def ann = object.metaClass.getTheClass().getAnnotation(com.jeffrick.grails.plugin.sharding.annotation.Shard.class)
-            def fieldName = ann.fieldName()
+        if (object.metaClass.getTheClass().isAnnotationPresent(ShardAnnotation)) {
+            ShardAnnotation ann = object.metaClass.getTheClass().getAnnotation(ShardAnnotation)
+            String fieldName = ann.fieldName()
 
             // If we don't have a shard assigned go assign one
             if (object."$fieldName" == null) {
@@ -33,7 +36,6 @@ class ShardService {
         } else {
             throw new Exception("Error, attempting to get the current shard from a non-shard domain class")
         }
-
 
         return (currentShard)
     }
@@ -61,7 +63,7 @@ class ShardService {
 
                 try {
                     CurrentShard.setAutoCommit sessionFactory.getCurrentSession().jdbcContext.hibernateTransaction == null
-                } catch (org.hibernate.HibernateException he) {
+                } catch (HibernateException he) {
                     CurrentShard.setAutoCommit true
                 } catch (Exception e) {
                     log.error "Error: ${e}"
@@ -87,7 +89,7 @@ class ShardService {
         }
     }
 
-    def Shard getNextShard() {
+    Shard getNextShard() {
         def c = Shard.createCriteria()
         def shards = c {
             order("ratio", "asc")
