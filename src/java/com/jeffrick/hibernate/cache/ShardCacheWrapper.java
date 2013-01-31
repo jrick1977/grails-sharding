@@ -1,17 +1,16 @@
 package com.jeffrick.hibernate.cache;
 
-import com.jeffrick.grails.plugin.sharding.CurrentShard;
-import com.jeffrick.grails.plugin.sharding.ShardConfig;
+import java.util.Map;
+
 import org.hibernate.cache.Cache;
 import org.hibernate.cache.CacheException;
 
-import java.util.Map;
+import com.jeffrick.grails.plugin.sharding.CurrentShard;
+import com.jeffrick.grails.plugin.sharding.ShardConfig;
 
 /**
- * This wrapper provides a prefix for the cache based on the current shard db
+ * Provides a prefix for the cache based on the current shard db.
  * @author <a href='mailto:jeffrick@gmail.com'>Jeff Rick</a>
- * Date: Feb 14, 2010
- * Time: 11:30:28 AM
  */
 public class ShardCacheWrapper implements Cache {
     protected Cache baseCache;

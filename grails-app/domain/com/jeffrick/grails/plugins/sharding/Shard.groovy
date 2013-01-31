@@ -1,7 +1,7 @@
 package com.jeffrick.grails.plugins.sharding
 
 /**
- * This class and table is used to manage all of the database shards within the system.  This table is primarily
+ * Manages all of the database shards within the system.  This table is primarily
  * used to find the next shard to assing a new user to.
  * @author <a href='mailto:jeffrick@gmail.com'>Jeff Rick</a>
  */
@@ -10,7 +10,7 @@ class Shard {
       cache true
       datasources(['index'])
   }
-  
+
   /**
    * The name of the shard, used internally to refer to the shard.
    */
@@ -42,24 +42,18 @@ class Shard {
     lastUpdated(nullable: true)
   }
 
-  def public incrementUsage = {
+  def incrementUsage() {
     // Increment usage
-    this.shardUsage++
+    shardUsage++
 
     // Reset the ratio
-    this.ratio = this.shardUsage / this.shardCapacity
+    ratio = shardUsage / shardCapacity
 
     // Save the changes
-    this.save(flush: true)
+    save(flush: true)
   }
 
-
-  def String toString() {
-    return "com.rezzonate.domain.index.Shard{" +
-            "id=" + id +
-            ", shardName=" + shardName +
-            ", shardUsage='" + shardUsage + '\'' +
-            ", ratio='" + ratio + '\'' +
-            '}';
+  String toString() {
+    "com.rezzonate.domain.index.Shard{id=$id, shardName=$shardName, shardUsage='$shardUsage', ratio='$ratio'}"
   }
 }
