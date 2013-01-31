@@ -20,6 +20,12 @@ class ShardingGrailsPlugin {
     def description = 'Supports sharding of data'
     def documentation = "http://grails.org/plugin/sharding"
 
+    def license = 'APACHE'
+    def scm = [url: 'https://github.com/jrick1977/grails-sharding']
+//    def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/???']
+//    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
+//    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
+
     def doWithSpring = {
 
         def shardDataSources = [:]
