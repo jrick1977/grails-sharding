@@ -3,7 +3,7 @@ grails-sharding
 
 Grails Sharding Plugin
 
-Dependency : Grails 2.2.0
+Dependency : Grails 2.0.0+
 
 Documentation
 
