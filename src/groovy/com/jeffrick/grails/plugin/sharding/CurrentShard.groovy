@@ -1,64 +1,56 @@
 package com.jeffrick.grails.plugin.sharding
 
-import com.jeffrick.grails.plugin.sharding.annotation.Shard
 import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 
+import com.jeffrick.grails.plugin.sharding.annotation.Shard as ShardAnnotation
+import com.jeffrick.grails.plugins.sharding.Shard
+
 /**
- * This class holds the current shard we are pointing, values are stored as thread locals
+ * Holds the current shard we are pointing, values are stored as thread locals.
  * @author <a href='mailto:jeffrick@gmail.com'>Jeff Rick</a>
  */
 class CurrentShard {
 
-    private static final ThreadLocal _shardIndex
-    private static final ThreadLocal _autoCommit
-    private static final ThreadLocal _indexDataSource
-    private static final ThreadLocal<HashMap<String, ConfigObject>> _dataSourceLookup
-
-    static {
-        _shardIndex = new ThreadLocal();
-        _autoCommit = new ThreadLocal();
-        _indexDataSource = new ThreadLocal();
-        _dataSourceLookup = new ThreadLocal<HashMap<String,ConfigObject>>()
-    }
+    private static final ThreadLocal<Integer> _shardIndex = new ThreadLocal<Integer>()
+    private static final ThreadLocal<Boolean> _autoCommit = new ThreadLocal<Boolean>()
+    private static final ThreadLocal<String> _indexDataSource = new ThreadLocal<String>()
+    private static final ThreadLocal<Map<String, ConfigObject>> _dataSourceLookup = new ThreadLocal<Map<String,ConfigObject>>()
 
     static ShardConfig get() {
         Integer currentId = getIndex()
-        ShardConfig current = null;
-        Shards.getShards().each {
-            if (it.id == currentId) {
-                current = it
+        for (shard in Shards) {
+            if (shard.id == currentId) {
+                return shard
             }
         }
-
-        return (current);
     }
 
-    /** *
+    /**
      * Gets the index of the current shard
      */
     static Integer getIndex() {
         if (_shardIndex.get() == null) {
-            _shardIndex.set(1);
+            _shardIndex.set(1)
         }
-        return ((long) _shardIndex.get())
+        return (_shardIndex.get())
     }
 
-    /** *
+    /**
      * Gets whether the current shard is set to Auto Commit
      */
     static boolean getAutoCommit() {
         if (_autoCommit.get() == null) {
             return true
         } else {
-            return ((boolean) _autoCommit.get())
+            return (_autoCommit.get())
         }
     }
 
-    /** *
+    /**
      * Sets whether the current shard is set to Auto Commit
      */
     static void setAutoCommit(boolean autoCommit) {
-        _autoCommit.set autoCommit;
+        _autoCommit.set autoCommit
     }
 
     /** *
@@ -69,25 +61,25 @@ class CurrentShard {
         _shardIndex.set(shard.id)
     }
 
-    static void setDataSourceLookup(HashMap<String, ConfigObject> dataSourceLookup) {
+    static void setDataSourceLookup(Map<String, ConfigObject> dataSourceLookup) {
         _dataSourceLookup.set(dataSourceLookup)
     }
 
     static String getIndexDatabaseURL() {
         String dataSourceName = getIndexDataSourceName()
-        HashMap<String, ConfigObject> lookup = _dataSourceLookup.get()
+        Map<String, ConfigObject> lookup = _dataSourceLookup.get()
         return(lookup.get(dataSourceName).getProperty("url"))
     }
 
-    static public String getIndexDataSourceName() {
+    static String getIndexDataSourceName() {
         if (_indexDataSource.get() == null) {
 
-            def grailsApplication = new com.jeffrick.grails.plugins.sharding.Shard().domainClass.grailsApplication
+            def grailsApplication = new Shard().domainClass.grailsApplication
 
             grailsApplication.domainClasses.each {
                 DefaultGrailsDomainClass domainClass ->
-                    if (domainClass.clazz.isAnnotationPresent(Shard)) {
-                        def prop = domainClass.clazz.getAnnotation(Shard)
+                    if (domainClass.clazz.isAnnotationPresent(ShardAnnotation)) {
+                        ShardAnnotation prop = domainClass.clazz.getAnnotation(ShardAnnotation)
                         _indexDataSource.set(prop.indexDataSourceName())
                         return (prop.indexDataSourceName())
                     }
@@ -100,5 +92,4 @@ class CurrentShard {
 
         throw new Exception("Error no domain class registered as a Shard lookup class!")
     }
-
 }
