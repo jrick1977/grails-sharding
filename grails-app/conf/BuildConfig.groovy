@@ -13,10 +13,17 @@ grails.project.dependency.resolution = {
   }
 
   dependencies {
-    compile('c3p0:c3p0:0.9.1')
+    compile 'c3p0:c3p0:0.9.1', {
+      export = false
+    }
   }
 
   plugins {
-    runtime ":hibernate:$grailsVersion"
+    build ':release:2.2.0', ':rest-client-builder:1.0.3', {
+      export = false
+    }
+    runtime ":hibernate:$grailsVersion", {
+      export = false
+    }
   }
 }
