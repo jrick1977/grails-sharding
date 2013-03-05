@@ -74,9 +74,7 @@ class CurrentShard {
     }
 
     static String getIndexDatabaseURL() {
-        println "getIndexDatabaseURL"
         String dataSourceName = getIndexDataSourceName()
-        println "dataSourceName = $dataSourceName"
         return(_dataSourceLookup.get(dataSourceName).getProperty("url"))
     }
 
