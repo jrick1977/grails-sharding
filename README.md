@@ -55,13 +55,13 @@ Here is an example DataSource.groovy
 				url = "jdbc:mysql://localhost:3306/shardINDEX"
 				username = "root"
 			}
-			dataSource_shard01 {
+			dataSource_shard1001 {
 				shard = true
 				dbCreate = "update" // one of 'create', 'create-drop','update'
 				url = "jdbc:mysql://localhost:3306/shard1001"
 				username = "root"
 			}
-			dataSource_shard02 {
+			dataSource_shard1002 {
 				shard = true
 				dbCreate = "update" // one of 'create', 'create-drop','update'
 				url = "jdbc:mysql://localhost:3306/shard1002"
