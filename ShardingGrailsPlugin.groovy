@@ -11,7 +11,7 @@ import com.jeffrick.grails.plugins.services.ShardService
 import com.jeffrick.grails.plugins.sharding.Shard
 
 class ShardingGrailsPlugin {
-    def version = "0.7"
+    def version = "0.8"
     def grailsVersion = "2.0.0 > *"
     def loadAfter = ['dataSource', 'domainClass', 'hibernate']
     def author = "Jeff Rick"
@@ -24,7 +24,7 @@ class ShardingGrailsPlugin {
     def scm = [url: 'https://github.com/jrick1977/grails-sharding']
 //    def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/???']
 //    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
-//    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
+    def developers = [ [ name: "Jeff Rick", email: "jeffrick@gmail.com" ]]
 
     def doWithSpring = {
 
@@ -32,7 +32,7 @@ class ShardingGrailsPlugin {
 
         shardDataSources.put(0, ref("dataSource"))
         int shardId = 1
-        for (Entry<String, Object> item in application.config.entrySet()) {
+        for (Map.Entry<String, Object> item in application.config.entrySet()) {
             if (item.key.startsWith('dataSource_')) {
                 if (item.value.getProperty("shard")) {
                     shardDataSources.put(shardId++, ref(item.key))
