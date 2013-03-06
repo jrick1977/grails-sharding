@@ -55,9 +55,9 @@ class ShardService {
 
     def change(ShardConfig shard) {
         if (shard) {
-            if (shard.name != CurrentShard.getName()) {
+            if (shard.name != CurrentShard.get().name) {
                 //test connection
-                def oldEnv = CurrentShard.getName()
+                def oldEnv = CurrentShard.get().name
 
                 CurrentShard.setShard shard
 
