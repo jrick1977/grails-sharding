@@ -32,12 +32,14 @@ class ShardingGrailsPlugin {
 
         shardDataSources.put(0, ref("dataSource"))
         int shardId = 1
-        application.config.each { key, value ->
-            if (key.startsWith('dataSource_')) {
-                shardDataSources.put(shardId++, ref(key))
+        for (Entry<String, Object> item in application.config.entrySet()) {
+            if (item.key.startsWith('dataSource_')) {
+                if (item.value.getProperty("shard")) {
+                    shardDataSources.put(shardId++, ref(item.key))
+                }
             }
         }
-
+        
         Shards.shards = loadShardConfig(application)
 
         // Create the dataSource bean that has the Shard specific SwitchableDataSource implementation
