@@ -2,6 +2,9 @@ package com.jeffrick.grails.plugin.sharding
 
 import com.jeffrick.grails.plugin.sharding.annotation.Shard
 import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.support.AbstractPlatformTransactionManager
 
 /**
  * This class holds the current shard we are pointing, values are stored as thread locals
@@ -12,12 +15,16 @@ class CurrentShard {
     private static final ThreadLocal _shardIndex
     private static final ThreadLocal _autoCommit
     private static final ThreadLocal _indexDataSource
+    private static final ThreadLocal<Map<String,TransactionStatus>> _transactionStatus
+    private static final ThreadLocal<PlatformTransactionManager> _transactionManager;
     private static HashMap<String, ConfigObject> _dataSourceLookup
 
     static {
         _shardIndex = new ThreadLocal();
         _autoCommit = new ThreadLocal();
         _indexDataSource = new ThreadLocal();
+        _transactionStatus = new ThreadLocal();
+        _transactionManager = new ThreadLocal<PlatformTransactionManager>();
         _dataSourceLookup = new HashMap<String,ConfigObject>()
     }
 
@@ -33,6 +40,41 @@ class CurrentShard {
         return (current);
     }
 
+    static PlatformTransactionManager getTransactionManager() {
+        return(_transactionManager.get());
+    }
+    static void setTransactionManager(PlatformTransactionManager transManager) {
+        _transactionManager.set(transManager);
+    }
+    static TransactionStatus getTransactionStatus(String url) {
+        if (_transactionStatus.get() == null) {
+            _transactionStatus.set(new HashMap<String, TransactionStatus>());
+        }
+
+        return(_transactionStatus.get().get(url));
+    }
+
+    static Collection<TransactionStatus> getTransactionStatus() {
+        if (_transactionStatus.get() == null) {
+            _transactionStatus.set(new HashMap<String, TransactionStatus>());
+        }
+
+        return(_transactionStatus.get().values());
+    }
+
+    static void setTransactionStatus(String url, TransactionStatus status) {
+        if (_transactionStatus.get() == null) {
+            _transactionStatus.set(new HashMap<String, TransactionStatus>());
+        }
+        _transactionStatus.get().put(url, status);
+    }
+
+    static void clearTransactionStatus() {
+        if (_transactionStatus.get() == null) {
+            _transactionStatus.set(new HashMap<String, TransactionStatus>());
+        }
+        _transactionStatus.get().clear();
+    }
     /** *
      * Gets the index of the current shard
      */
@@ -85,11 +127,11 @@ class CurrentShard {
 
             grailsApplication.domainClasses.each {
                 DefaultGrailsDomainClass domainClass ->
-                    if (domainClass.clazz.isAnnotationPresent(Shard)) {
-                        def prop = domainClass.clazz.getAnnotation(Shard)
-                        _indexDataSource.set(prop.indexDataSourceName())
-                        return (prop.indexDataSourceName())
-                    }
+                if (domainClass.clazz.isAnnotationPresent(Shard)) {
+                    def prop = domainClass.clazz.getAnnotation(Shard)
+                    _indexDataSource.set(prop.indexDataSourceName())
+                    return (prop.indexDataSourceName())
+                }
             }
 
         }
